@@ -174,7 +174,7 @@ This project forms the first component of a larger Computational Fluid Dynamics 
 The complete technical report is available in
 
 
-[📄 CFD Project Report](report/CFD_Project_01_Heat_Conduction_Report.pdf)
+[📄 CFD Project Report](CFD_Project_01_Heat_Conduction/report/CFD__1_Part1_Point_Gauss_Seidel.pdf)
 
 
 and includes the mathematical derivation, numerical implementation, verification procedure, computational setup, and detailed discussion of the results.
