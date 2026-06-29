@@ -1,0 +1,10 @@
+\section{Conclusion}
+
+A two-dimensional finite-volume solver for the steady-state heat conduction equation was successfully developed and verified. The governing Laplace equation was discretized using a second-order finite-volume formulation on a structured Cartesian mesh and solved iteratively using the Point Gauss-Seidel method. Dirichlet boundary conditions were implemented through ghost cells, allowing a uniform discretization to be applied throughout the computational domain.
+
+Verification was performed by comparing the numerical solution with the analytical solution of the Laplace equation. Excellent agreement was observed in the temperature contours, line-cut comparisons, and error distribution, while the residual histories demonstrated stable and monotonic convergence of the iterative solution procedure. These results confirm the correctness of the governing equation implementation, spatial discretization, boundary-condition treatment, and iterative solver.
+
+Beyond verifying the numerical implementation, this project establishes the computational framework for a more comprehensive CFD solver. The modular software structure developed in this work enables straightforward extension to accelerated iterative methods such as Successive Over-Relaxation (SOR), Line Gauss-Seidel, Alternating Direction Implicit (ADI), and multigrid techniques. Future developments will also include grid-convergence studies, performance comparisons among iterative methods, and the extension of the solver to more general transport equations encountered in computational fluid dynamics.
+
+This project therefore serves as the first stage in the development of a robust finite-volume CFD code and provides a verified foundation upon which more advanced numerical methods can be systematically implemented and evaluated.
+

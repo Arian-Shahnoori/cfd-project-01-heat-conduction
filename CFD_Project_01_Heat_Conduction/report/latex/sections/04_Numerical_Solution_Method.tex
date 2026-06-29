@@ -1,0 +1,126 @@
+\section{Numerical Solution Method}
+
+\subsection{Point Gauss-Seidel Iteration}
+
+The finite-volume discretization presented in the previous section results in a coupled system of algebraic equations involving the temperatures of neighboring control volumes. For large systems, iterative methods are generally preferred over direct solution techniques because of their lower memory requirements and straightforward implementation.
+
+In the present work, the Point Gauss-Seidel method is employed to solve the discrete system. Rearranging Equation~\ref{eq:laplace_discrete} to isolate the unknown temperature at the current control volume yields the iterative update equation
+
+\begin{equation}
+T_{i,j}^{k+1}
+=
+\frac{\Delta y^2}{2(\Delta x^2+\Delta y^2)}
+\left(
+T_{i+1,j}^{k}
++
+T_{i-1,j}^{k+1}
+\right)
++
+\frac{\Delta x^2}{2(\Delta x^2+\Delta y^2)}
+\left(
+T_{i,j+1}^{k}
++
+T_{i,j-1}^{k+1}
+\right)
+\label{eq:gs}
+\end{equation}
+
+where $k$ denotes the iteration number.
+
+Starting from an initial temperature distribution, the solution is updated sequentially throughout the computational domain. As the computation proceeds through the grid, newly computed temperatures immediately replace their values from the previous iteration and are subsequently used when updating neighboring control volumes. This feature distinguishes the Gauss-Seidel method from the Jacobi method and generally results in faster convergence.
+
+The iterative sweep alone is insufficient because the boundary values appearing in Equation~\ref{eq:gs} must also satisfy the prescribed boundary conditions. Consequently, the boundary conditions are updated after every Gauss-Seidel sweep before evaluating convergence.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Boundary Condition Implementation}
+
+The numerical formulation employs a cell-centered finite-volume mesh in which temperature values are stored at the centers of the control volumes. Since the physical boundaries do not coincide with computational nodes, the prescribed Dirichlet boundary conditions cannot be imposed directly.
+
+Instead, an additional layer of fictitious control volumes, commonly referred to as ghost cells, is introduced outside the computational domain. Assuming a linear variation of temperature between the neighboring cell centers, the ghost-cell value is obtained from
+
+\begin{equation}
+T_b
+=
+\frac{T_P+T_G}{2},
+\qquad
+T_G
+=
+2T_b-T_P
+\label{eq:ghost}
+\end{equation}
+
+where $T_b$ is the prescribed boundary temperature, $T_P$ denotes the adjacent interior control-volume temperature, and $T_G$ is the ghost-cell temperature.
+
+Updating the ghost cells after every Gauss-Seidel sweep ensures that Equation~\ref{eq:laplace_discrete} remains valid for every interior control volume, including those adjacent to the physical boundaries. This treatment allows a single discretization formula to be applied uniformly throughout the computational domain.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Residual Definition}
+
+After each iteration, the accuracy of the current solution is assessed by evaluating the residual of the discrete governing equation. The exact solution satisfies Equation~\ref{eq:laplace_discrete} exactly, whereas any intermediate iterate generally produces a non-zero residual.
+
+For the present problem, the residual associated with each control volume is
+
+\begin{equation}
+R_{i,j}
+=
+\frac{
+T_{i+1,j}
++
+T_{i-1,j}
++
+T_{i,j+1}
++
+T_{i,j-1}
+-
+4T_{i,j}
+}
+{\Delta x^2}
+\label{eq:residual}
+\end{equation}
+
+As the iterative solution approaches the exact discrete solution, the residual field tends toward zero throughout the computational domain.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Convergence Criterion}
+
+Because every control volume possesses its own residual, convergence is monitored using the norm of the residual field. The general definition of the residual norm is
+
+\begin{equation}
+L_p
+=
+\left(
+\frac{
+\sum_{i=1}^{N_{\mathrm{CV}}}
+A_i
+|R_i|^p
+}
+{
+\sum_{i=1}^{N_{\mathrm{CV}}}
+A_i
+}
+\right)^{1/p}
+\label{eq:lp}
+\end{equation}
+
+where $N_{\mathrm{CV}}$ is the total number of control volumes, $A_i$ is the area of control volume $i$, and $R_i$ is the corresponding residual.
+
+Since all control volumes have identical area in the present structured mesh, Equation~\ref{eq:lp} simplifies to the $L_2$ residual norm,
+
+\begin{equation}
+L_2
+=
+\left(
+\frac{
+\sum_{i=1}^{N_{\mathrm{CV}}}
+R_i^2
+}
+{N_{\mathrm{CV}}}
+\right)^{1/2}
+\label{eq:l2}
+\end{equation}
+
+The iterative solution procedure is repeated until the $L_2$ residual norm falls below a prescribed convergence tolerance. At this point, the numerical solution is considered converged and the resulting temperature field is used for post-processing and verification against the analytical solution.
+
